@@ -22,16 +22,16 @@ Now you can choose "Run Fix Script" at the top right.
 ## What the Script checks for
 
 * ServiceNow Assignment Groups with:
-** an unknown Escalation Policy ID in PagerDuty
-** no Service ID or Webhook ID (when configured for Assignment Group only)
-** an unknown Service ID in PagerDuty (when configured for Assignment Group only)
-** an unknown Webhook ID in PagerDuty (when configured for Assignment Group only)
-** a Webhook ID whose parent Service is not the Service ID in the Assignment Group (when configured for Assignment Group only)
+  * an unknown Escalation Policy ID in PagerDuty
+  * no Service ID or Webhook ID (when configured for Assignment Group only)
+  * an unknown Service ID in PagerDuty (when configured for Assignment Group only)
+  * an unknown Webhook ID in PagerDuty (when configured for Assignment Group only)
+  * a Webhook ID whose parent Service is not the Service ID in the Assignment Group (when configured for Assignment Group only)
 * ServiceNow Configuration Items with:
-** no Service ID or Webhook ID (when configured for Configuration Items and Assignment Groups)
-** an unknown Service ID in PagerDuty (when configured for Configuration Items and Assignment Groups)
-** an unknown Webhook ID in PagerDuty (when configured for Configuration Items and Assignment Groups)
-** a Webhook ID whose parent Service is not the Service ID in the Configuration Item (when configured for Configuration Items and Assignment Groups)
+  * no Service ID or Webhook ID (when configured for Configuration Items and Assignment Groups)
+  * an unknown Service ID in PagerDuty (when configured for Configuration Items and Assignment Groups)
+  * an unknown Webhook ID in PagerDuty (when configured for Configuration Items and Assignment Groups)
+  * a Webhook ID whose parent Service is not the Service ID in the Configuration Item (when configured for Configuration Items and Assignment Groups)
 * PagerDuty Services with ServiceNow Extensions that do not have any provisioned Service ID entries in Assignment Groups or Configuration Items 
 
 ## Script Output
