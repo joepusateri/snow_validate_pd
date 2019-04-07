@@ -8,7 +8,7 @@ var sn2pdMapping = gs.getProperty("x_pd_integration.sn2pd_mapping");
 var CIAG = (sn2pdMapping == sn2pdMappingCIAG); 
 
 
-var output = ""; 
+var output = "\nValidation starting..."; 
 var services = new Array();
 var pd = new x_pd_integration.PagerDuty(); 
 var rest = new x_pd_integration.PagerDuty_REST(); 
@@ -35,13 +35,13 @@ while (group.next()) {
 
 
 	} else if (status == 404) { 
-		output += "\nEscalation Policy for group " + group.name + " (" + group.x_pd_integration_pagerduty_escalation + ") was not found"; 
+		output += "\nERROR: Escalation Policy for group \"" + group.name + "\" (" + group.x_pd_integration_pagerduty_escalation + ") was not found"; 
 	} 
 
 	if (!CIAG) { 
 		if (group.x_pd_integration_pagerduty_service == "" || group.x_pd_integration_pagerduty_webhook == "") 
 		{ 
-			output += "\nGroup "+group.name+" cannot have a blank Service or Webhook"; 
+			output += "\nERROR: Group \""+group.name+"\" cannot have a blank Service or Webhook"; 
 		} 
 		else 
 		{ 
@@ -56,7 +56,7 @@ while (group.next()) {
 				var body = this.JSON.decode(response.getBody()); 
 				services.push(""+group.x_pd_integration_pagerduty_service);
 			} else if (status == 404) { 
-				output += "\nService for group " + group.name + " (" + group.x_pd_integration_pagerduty_service + ") was not found"; 
+				output += "\nERROR: Service for group \"" + group.name + "\" (" + group.x_pd_integration_pagerduty_service + ") was not found"; 
 			} 
 
 			feature = 'extensions/' + group.x_pd_integration_pagerduty_webhook; 
@@ -70,10 +70,10 @@ while (group.next()) {
 				var body = this.JSON.decode(response.getBody()); 
 				var service_id = body.extension.extension_objects[0].id; 
 				if (service_id != group.x_pd_integration_pagerduty_service) { 
-					output += "\nWebhook (" + group.x_pd_integration_pagerduty_webhook + ") for group "+group.name+" does not belong to Service (" + group.x_pd_integration_pagerduty_service + ")"; 
+					output += "\nERROR: Webhook (" + group.x_pd_integration_pagerduty_webhook + ") for group \""+group.name+"\" does not belong to Service (" + group.x_pd_integration_pagerduty_service + ")"; 
 				} 
 			} else if (status == 404) { 
-				output += "\nWebhook for group " + group.name + " (" + group.x_pd_integration_pagerduty_webhook + ") was not found"; 
+				output += "\nERROR: Webhook for group \"" + group.name + "\" (" + group.x_pd_integration_pagerduty_webhook + ") was not found"; 
 			} 
 		} 
 	} 
@@ -89,37 +89,44 @@ if (CIAG) {
 		gs.debug("CI {0} {1} {2}", ci.name, ci.x_pd_integration_pagerduty_service, ci.x_pd_integration_pagerduty_webhook); 
 		//gs.debug("User "+ pd.getUserEmailByPDID("PZV0GSG")); 
 
-		var feature = 'services/' + ci.x_pd_integration_pagerduty_service; 
-
-		var response = rest.getREST(feature); 
-		var responseBody = response.haveError() ? pd._extractPDIncidentError(response) : response.getBody(); 
-		status = response.getStatusCode(); 
-		//gs.debug("{0} response: {1}:{2}", me, status, responseBody); 
-
-		if (status == 200) { 
-			var body = this.JSON.decode(response.getBody()); 
-			services.push(""+ci.x_pd_integration_pagerduty_service);
-		} else if (status == 404) { 
-			output += "\nService for CI " + ci.name + " (" + ci.x_pd_integration_pagerduty_service + ") was not found"; 
+		if (ci.x_pd_integration_pagerduty_service == "" || ci.x_pd_integration_pagerduty_webhook == "") 
+		{ 
+			output += "\nERROR: CI \""+ci.name+"\" cannot have a blank Service or Webhook"; 
 		} 
+		else 
+		{
+			var feature = 'services/' + ci.x_pd_integration_pagerduty_service; 
 
-		feature = 'extensions/' + ci.x_pd_integration_pagerduty_webhook; 
+			var response = rest.getREST(feature); 
+			var responseBody = response.haveError() ? pd._extractPDIncidentError(response) : response.getBody(); 
+			status = response.getStatusCode(); 
+			//gs.debug("{0} response: {1}:{2}", me, status, responseBody); 
 
-		response = rest.getREST(feature); 
-		responseBody = response.haveError() ? pd._extractPDIncidentError(response) : response.getBody(); 
-		status = response.getStatusCode(); 
-		//gs.debug("{0} response: {1}:{2}", me, status, responseBody); 
-
-		if (status == 200) { 
-			var body = this.JSON.decode(response.getBody()); 
-			var service_id = body.extension.extension_objects[0].id; 
-			if (service_id != ci.x_pd_integration_pagerduty_service) { 
-				output += "\nWebhook (" + ci.x_pd_integration_pagerduty_webhook + ") for CI "+ci.name+" does not belong to Service (" + ci.x_pd_integration_pagerduty_service + ")"; 
+			if (status == 200) { 
+				var body = this.JSON.decode(response.getBody()); 
+				services.push(""+ci.x_pd_integration_pagerduty_service);
+			} else if (status == 404) { 
+				output += "\nERROR: Service for CI \"" + ci.name + "\" (" + ci.x_pd_integration_pagerduty_service + ") was not found"; 
 			} 
 
-		} else if (status == 404) { 
-			output += "\nWebhook for CI " + ci.name + " (" + ci.x_pd_integration_pagerduty_webhook + ") was not found"; 
-		} 
+			feature = 'extensions/' + ci.x_pd_integration_pagerduty_webhook; 
+
+			response = rest.getREST(feature); 
+			responseBody = response.haveError() ? pd._extractPDIncidentError(response) : response.getBody(); 
+			status = response.getStatusCode(); 
+			//gs.debug("{0} response: {1}:{2}", me, status, responseBody); 
+
+			if (status == 200) { 
+				var body = this.JSON.decode(response.getBody()); 
+				var service_id = body.extension.extension_objects[0].id; 
+				if (service_id != ci.x_pd_integration_pagerduty_service) { 
+					output += "\nERROR: Webhook (" + ci.x_pd_integration_pagerduty_webhook + ") for CI \""+ci.name+"\" does not belong to Service (" + ci.x_pd_integration_pagerduty_service + ")"; 
+				} 
+
+			} else if (status == 404) { 
+				output += "\nERROR: Webhook for CI \"" + ci.name + "\" (" + ci.x_pd_integration_pagerduty_webhook + ") was not found"; 
+			}
+		}			
 	} 
 } 
 gs.info("services="+services);
@@ -140,15 +147,11 @@ gs.info("services="+services);
 				if (body.extensions[i].extension_schema.summary.substring(0,10) == "ServiceNow" && 
 				services.indexOf(body.extensions[i].extension_objects[0].id) == -1)
 				{
-					//gs.debug("Services="+services);
-					//gs.debug("Service id:"+body.extensions[i].extension_objects[0].id);
-					//gs.debug("index "+services.indexOf(body.extensions[i].extension_objects[0].id));
-					//gs.debug("Service with ID "+body.extensions[i].extension_objects[0].id+" has a ServiceNow Webhook but no match in ServiceNow");
-					output += "\nService \""+body.extensions[i].extension_objects[0].summary+"\" ("+body.extensions[i].extension_objects[0].id+") has a ServiceNow Webhook but no match in ServiceNow"
+					output += "\nWARNING: Service \""+body.extensions[i].extension_objects[0].summary+"\" ("+body.extensions[i].extension_objects[0].id+") has a ServiceNow Extension but no provisioned elements in ServiceNow"
 				}
 			}
 
 		} 
 }
+output += "\nValidation complete";
 gs.info("\n\n\n" + output); 
-gs.info("Completed");
