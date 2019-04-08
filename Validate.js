@@ -129,7 +129,7 @@ if (CIAG) {
 		}			
 	} 
 } 
-gs.info("services="+this.JSON.encode(services));
+//gs.debug("services="+this.JSON.encode(services));
 {
 		var feature = 'extensions/'; 
 
