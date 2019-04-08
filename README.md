@@ -5,15 +5,15 @@ is configured correctly.
 
 ## How to run it
 
-### Background Script
+### As a Background Script
 
 1. In ServiceNow, type "Scripts - Background" in the Filter Navigator at the top left of the page 
-1. choose that item from "System Definition -> Scripts - Background". 
+1. Choose that item from "System Definition -> Scripts - Background". 
 1. Paste the contents of Validate.js into the text box. 
 1. At the bottom of the text box, make sure that the scope is "x_pd_integration".
 1. Choose the "Run script" button.
 
-### Fix Script
+### As a Fix Script
 
 1. In ServiceNow, Type "Fix Scripts" in the Filter Navigator at the top left of the page 
 1. Choose that item from "System Definition -> Fix Scripts". 
@@ -24,6 +24,8 @@ is configured correctly.
 1. Choose "Run Fix Script" at the top right.
 
 ## What the Script checks for
+
+The script will report on any:
 
 * ServiceNow Assignment Groups with:
   * an unknown Escalation Policy ID in PagerDuty
