@@ -129,7 +129,7 @@ if (CIAG) {
 		}			
 	} 
 } 
-gs.info("services="+services);
+gs.info("services="+this.JSON.encode(services));
 {
 		var feature = 'extensions/'; 
 
@@ -147,7 +147,11 @@ gs.info("services="+services);
 				if (body.extensions[i].extension_schema.summary.substring(0,10) == "ServiceNow" && 
 				services.indexOf(body.extensions[i].extension_objects[0].id) == -1)
 				{
-					output += "\nWARNING: Service \""+body.extensions[i].extension_objects[0].summary+"\" ("+body.extensions[i].extension_objects[0].id+") has a ServiceNow Extension but no provisioned elements in ServiceNow"
+					if (body.extensions[i].config.target.contains(gs.getProperty('glide.servlet.uri')))
+					{
+						//gs.debug("body.extensions[i].config.target="+body.extensions[i].config.target);
+						output += "\nWARNING: Service \""+body.extensions[i].extension_objects[0].summary+"\" ("+body.extensions[i].extension_objects[0].id+") has a ServiceNow Extension but no provisioned elements in ServiceNow"
+					}
 				}
 			}
 
