@@ -68,9 +68,14 @@ while (group.next()) {
 
 			if (status == 200) { 
 				var body = this.JSON.decode(response.getBody()); 
-				var service_id = body.extension.extension_objects[0].id; 
-				if (service_id != group.x_pd_integration_pagerduty_service) { 
-					output += "\nERROR: Webhook (" + group.x_pd_integration_pagerduty_webhook + ") for group \""+group.name+"\" does not belong to Service (" + group.x_pd_integration_pagerduty_service + ")"; 
+				if (body.extension.extension_objects.length > 0)
+				{
+					var service_id = body.extension.extension_objects[0].id; 
+					if (service_id != group.x_pd_integration_pagerduty_service) { 
+						output += "\nERROR: Webhook (" + group.x_pd_integration_pagerduty_webhook + ") for group \""+group.name+"\" does not belong to Service (" + group.x_pd_integration_pagerduty_service + ")"; 
+					} 
+				} else {
+					output += "\nERROR: Webhook (" + group.x_pd_integration_pagerduty_webhook + ") for group \""+group.name+"\" does not belong to any Service";
 				} 
 			} else if (status == 404) { 
 				output += "\nERROR: Webhook for group \"" + group.name + "\" (" + group.x_pd_integration_pagerduty_webhook + ") was not found"; 
@@ -118,9 +123,14 @@ if (CIAG) {
 
 			if (status == 200) { 
 				var body = this.JSON.decode(response.getBody()); 
-				var service_id = body.extension.extension_objects[0].id; 
-				if (service_id != ci.x_pd_integration_pagerduty_service) { 
-					output += "\nERROR: Webhook (" + ci.x_pd_integration_pagerduty_webhook + ") for CI \""+ci.name+"\" does not belong to Service (" + ci.x_pd_integration_pagerduty_service + ")"; 
+				if (body.extension.extension_objects.length > 0)
+				{
+					var service_id = body.extension.extension_objects[0].id; 
+					if (service_id != ci.x_pd_integration_pagerduty_service) { 
+						output += "\nERROR: Webhook (" + ci.x_pd_integration_pagerduty_webhook + ") for CI \""+ci.name+"\" does not belong to Service (" + ci.x_pd_integration_pagerduty_service + ")"; 
+					}
+				}  else {
+					output += "\nERROR: Webhook (" + ci.x_pd_integration_pagerduty_webhook + ") for CI \""+ci.name+"\" does not belong to any Service";
 				} 
 
 			} else if (status == 404) { 
